@@ -492,11 +492,13 @@ static void tlsio_esp_tls_dowork(CONCRETE_IO_HANDLE tls_io)
         case TLSIO_STATE_OPEN:
             if (dowork_read(tls_io_instance) < 0 && errno != EAGAIN)
             {
-                tls_io_instance->tlsio_state = TLSIO_STATE_ERROR;
+              LogError("Error while reading in dowork_read");
+              enter_tlsio_error_state(tls_io_instance);
             }
             if (dowork_send(tls_io_instance) < 0 && errno != EAGAIN)
             {
-                tls_io_instance->tlsio_state = TLSIO_STATE_ERROR;
+              LogError("Error while writing in dowork_send");
+              enter_tlsio_error_state(tls_io_instance);
             }
             break;
         case TLSIO_STATE_ERROR:
