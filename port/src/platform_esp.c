@@ -14,31 +14,25 @@
 
 #include "lwip/apps/sntp.h"
 
-static const char* TAG = "platform";
+static const char* TAG = "esp-azure-platform";
 
-time_t sntp_get_current_timestamp();
 void initialize_sntp(void);
 
 int platform_init(void)
 {
-    initialize_sntp();
-    printf("ESP platform sntp inited!\n");
-    time_t now = sntp_get_current_timestamp();
-
-    char strftime_buf[64];
-    struct tm timeinfo;
-
-    localtime_r(&now, &timeinfo);
-    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-    ESP_LOGI(TAG, "The current date/time is: %s", strftime_buf);
-
-    return 0;
+  initialize_sntp();
+  time_t now = get_time(NULL);
+  struct tm timeinfo;
+  localtime_r(&now, &timeinfo);
+  char strftime_buf[64];
+  strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+  ESP_LOGD(TAG, "ESP platform initialized. The current date/time is: %s", strftime_buf);
+  return 0;
 }
 
 const IO_INTERFACE_DESCRIPTION* platform_get_default_tlsio(void)
 {
     return tlsio_pal_get_interface_description();
-    return NULL;
 }
 
 void platform_deinit(void)
